@@ -22,9 +22,9 @@ public class MainActivity extends AppCompatActivity {
     PeakSdkUiHelper uiHelper = new PeakSdkUiHelper(MainActivity.this);
     private String TAG = "peak";
     private static final int AD_CHECK_DELAY_SECONDS = 1;
-    private static final String PEAK_APP_ID = "343b9d1657f5f935";
-    private static final String PEAK_INTERSTITIAL_ZONE_ID = "59638";
-    private static final String PEAK_BANNER_ZONE_ID = "59665";
+    private static final String PEAK_APP_ID = "5b1656281bbad6b8";
+    private static final String PEAK_INTERSTITIAL_ZONE_ID = "27022";
+    private static final String PEAK_BANNER_ZONE_ID = "27041";
 
     private final Handler uiThreadHandler = new Handler();
     private final ScheduledExecutorService interstitialAdAvailabilityExecutor =

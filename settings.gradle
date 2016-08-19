@@ -1,1 +1,1 @@
-include ':app', ':peak-sdk'
+include ':app', ':peak-sdk-new'

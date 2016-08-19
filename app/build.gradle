@@ -28,5 +28,5 @@ dependencies {
     compile 'com.android.support:appcompat-v7:24.1.1'
     compile 'com.google.android.gms:play-services-ads:9.4.0'
     compile 'com.google.android.gms:play-services-location:9.4.0'
-    compile project(':peak-sdk')
+    compile project(':peak-sdk-new')
 }

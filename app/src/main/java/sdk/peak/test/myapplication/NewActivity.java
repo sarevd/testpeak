@@ -15,22 +15,35 @@ import android.widget.TextView;
 import com.peak.PeakSdk;
 import com.peak.PeakSdkListener;
 import com.peak.PeakSdkUiHelper;
+import com.peak.exception.PeakSdkBannerShowFailedException;
 import com.peak.exception.PeakSdkException;
 import com.peak.nativeads.PeakNativeAd;
 
 import org.w3c.dom.Text;
 
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+
 /**
- * Created by nenad on 8/9/2016.
+ * Created by darko on 8/9/2016.
  */
 public class NewActivity extends AppCompatActivity {
+//
+    private static final String PEAK_APP_ID = "5b1656281bbad6b8";
+    private static final String PEAK_INTERSTITIAL_ZONE_ID = "27022";
+    private static final String PEAK_BANNER_ZONE_ID = "27041";
+    private static final String NATIVE_AD_ID = "27050";
+    // new ids
+//    private static final String PEAK_APP_ID = "343b9d1657f5f935";
+//    private static final String PEAK_INTERSTITIAL_ZONE_ID = "59638";
+//    private static final String PEAK_BANNER_ZONE_ID = "59665";
+//    private static final String NATIVE_AD_ID = "59678";
 
-    private static final String PEAK_APP_ID = "343b9d1657f5f935";
-    private static final String PEAK_INTERSTITIAL_ZONE_ID = "59638";
-    private static final String PEAK_BANNER_ZONE_ID = "59665";
-    private static final String NATIVE_AD_ID = "59678";
+    private boolean interstitialShown = false;
+    private boolean bannerShown = false;
 
-    ImageView adIcon, mainImage;
+    ImageView adIcon, mainImage, privacyImageView;
     TextView adText, adTitle;
     Button button;
     private final Handler uiThreadHandler = new Handler();
@@ -38,6 +51,17 @@ public class NewActivity extends AppCompatActivity {
     PeakSdkUiHelper uiHelper = new PeakSdkUiHelper(NewActivity.this);
     private LinearLayout bannerContainer;
     private String TAG = "peakkkkk";
+
+
+    private final ScheduledExecutorService bannerAdAvailabilityExecutor =
+            Executors.newSingleThreadScheduledExecutor();
+    private final ScheduledExecutorService nativeAdAvailabilityExecutor =
+            Executors.newSingleThreadScheduledExecutor();
+    private final ScheduledExecutorService interstitialAdAvailabilityExecutor =
+            Executors.newSingleThreadScheduledExecutor();
+
+
+    private static final int AD_CHECK_DELAY_SECONDS = 1;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -49,6 +73,7 @@ public class NewActivity extends AppCompatActivity {
             public void onInitializationSuccess() {
                 Log.d(TAG, "onInitializationSuccess: ");
                 PeakSdk.showInterstitial(PEAK_INTERSTITIAL_ZONE_ID);
+                PeakSdk.showBanner(PEAK_BANNER_ZONE_ID);
             }
 
             @Override
@@ -64,12 +89,17 @@ public class NewActivity extends AppCompatActivity {
             @Override
             public void onBannerShowFailed(String s, PeakSdkException e) {
                 Log.d(TAG, "onBannerShowFailed: ");
-                if (PeakSdk.checkAdAvailable(PEAK_BANNER_ZONE_ID)) {
-                    View banner = PeakSdk.showBanner(PEAK_BANNER_ZONE_ID);
-                    if (banner != null) {
-                        bannerContainer.addView(banner);
-                    }
-                }
+//                bannerAdAvailabilityExecutor.scheduleWithFixedDelay(
+//                        getShowBannerRunnable(), 0, AD_CHECK_DELAY_SECONDS, TimeUnit.SECONDS);
+//                if (PeakSdk.checkAdAvailable(PEAK_BANNER_ZONE_ID)) {
+//                    final View banner = PeakSdk.showBanner(PEAK_BANNER_ZONE_ID);
+//                    uiThreadHandler.post(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            showBanner(banner);
+//                        }
+//                    });
+//                }
             }
 
             @Override
@@ -81,7 +111,7 @@ public class NewActivity extends AppCompatActivity {
             public void onInterstitialShowFailed(String s, PeakSdkException e) {
                 Log.d(TAG, "onInterstitialShowFailed: ");
                 if (PeakSdk.checkAdAvailable(PEAK_INTERSTITIAL_ZONE_ID)) {
-                    PeakSdk.showInterstitial(PEAK_INTERSTITIAL_ZONE_ID);
+                    //  PeakSdk.showInterstitial(PEAK_INTERSTITIAL_ZONE_ID);
                 }
             }
 
@@ -89,7 +119,7 @@ public class NewActivity extends AppCompatActivity {
             public void onInterstitialClosed(String s) {
                 Log.d(TAG, "onInterstitialClosed: ");
                 if (PeakSdk.checkAdAvailable(PEAK_INTERSTITIAL_ZONE_ID)) {
-                  //  PeakSdk.showInterstitial(PEAK_INTERSTITIAL_ZONE_ID);
+                    //  PeakSdk.showInterstitial(PEAK_INTERSTITIAL_ZONE_ID);
                 }
             }
 
@@ -97,30 +127,92 @@ public class NewActivity extends AppCompatActivity {
             public void onCompletedRewardExperience(String s) {
                 Log.d(TAG, "onCompletedRewardExperience: ");
                 if (PeakSdk.checkAdAvailable(PEAK_INTERSTITIAL_ZONE_ID)) {
-                  //  PeakSdk.showInterstitial(PEAK_INTERSTITIAL_ZONE_ID);
+                    //  PeakSdk.showInterstitial(PEAK_INTERSTITIAL_ZONE_ID);
                 }
+            }
+
+            @Override
+            public void onNativeAdShowSuccess(String s) {
+                Log.d(TAG, "onNativeAdShowSuccess: ");
+            }
+
+            @Override
+            public void onNativeAdShowFailed(String s, PeakSdkException e) {
+                Log.d(TAG, "onNativeAdShowFailed: ");
             }
         };
 
         PeakSdk.initialize(PEAK_APP_ID, uiHelper, peakSdkListener);
 
-        if (PeakSdk.checkAdAvailable(PEAK_INTERSTITIAL_ZONE_ID)) {
-            PeakSdk.showInterstitial(PEAK_INTERSTITIAL_ZONE_ID);
-        } else
-            PeakSdk.showInterstitial(PEAK_INTERSTITIAL_ZONE_ID);
 
-        if (PeakSdk.checkAdAvailable(PEAK_BANNER_ZONE_ID)) {
-            final View banner = PeakSdk.showBanner(PEAK_BANNER_ZONE_ID);
-            uiThreadHandler.post(new Runnable() {
-                @Override
-                public void run() {
-                    showBanner(banner);
-                }
-            });
-        }
-
-        showNativeAd();
+//        if (PeakSdk.checkAdAvailable(PEAK_BANNER_ZONE_ID)) {
+//            final View banner = PeakSdk.showBanner(PEAK_BANNER_ZONE_ID);
+//            uiThreadHandler.post(new Runnable() {
+//                @Override
+//                public void run() {
+//                    showBanner(banner);
+//                }
+//            });
+//        }
+        bannerAdAvailabilityExecutor.scheduleWithFixedDelay(
+                getShowBannerRunnable(), 0, AD_CHECK_DELAY_SECONDS, TimeUnit.SECONDS);
+        nativeAdAvailabilityExecutor.scheduleWithFixedDelay(
+                getShowNativeRunnable(), 0, AD_CHECK_DELAY_SECONDS, TimeUnit.SECONDS);
+        interstitialAdAvailabilityExecutor.scheduleWithFixedDelay(
+                getShowInterstitialRunnable(), 0, AD_CHECK_DELAY_SECONDS, TimeUnit.SECONDS);
     }
+
+    private Runnable getShowInterstitialRunnable() {
+        return new Runnable() {
+            @Override
+            public void run() {
+                if (isFinishing() || interstitialShown) {
+                    interstitialAdAvailabilityExecutor.shutdownNow();
+                }
+                if (PeakSdk.checkAdAvailable(PEAK_INTERSTITIAL_ZONE_ID)) {
+                    interstitialShown = true;
+                    PeakSdk.showInterstitial(PEAK_INTERSTITIAL_ZONE_ID);
+                }
+            }
+        };
+    }
+
+    private Runnable getShowBannerRunnable() {
+        return new Runnable() {
+            @Override
+            public void run() {
+                if (isFinishing() || bannerShown) {
+                    bannerAdAvailabilityExecutor.shutdownNow();
+                }
+                if (PeakSdk.checkAdAvailable(PEAK_BANNER_ZONE_ID)) {
+                    bannerShown = true;
+                    final View banner = PeakSdk.showBanner(PEAK_BANNER_ZONE_ID);
+                    uiThreadHandler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            showBanner(banner);
+                        }
+                    });
+                }
+            }
+        };
+    }
+
+
+    private Runnable getShowNativeRunnable() {
+        return new Runnable() {
+            @Override
+            public void run() {
+                if (isFinishing()) {
+                    nativeAdAvailabilityExecutor.shutdownNow();
+                }
+                if (PeakSdk.checkAdAvailable(NATIVE_AD_ID)) {
+                    showNativeAd();
+                }
+            }
+        };
+    }
+
 
     @SuppressWarnings("ConstantConditions")
     private void showBanner(View banner) {
@@ -129,7 +221,7 @@ public class NewActivity extends AppCompatActivity {
     }
 
     private void showNativeAd() {
-        if(PeakSdk.checkAdAvailable(NATIVE_AD_ID)) {
+        if (PeakSdk.checkAdAvailable(NATIVE_AD_ID)) {
             PeakNativeAd peakNativeAd = PeakSdk.showNativeAd(NATIVE_AD_ID);
             if (peakNativeAd != null) {
                 //notify SDK that ad was shown
@@ -156,6 +248,7 @@ public class NewActivity extends AppCompatActivity {
         adTitle = (TextView) findViewById(R.id.native_ad_title);
         adTitle.setText(nativeAd.getTitle());
         button = (Button) findViewById(R.id.button);
+        button.setText(nativeAd.getActionText());
         // set onClickListener on your button
         button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -164,5 +257,34 @@ public class NewActivity extends AppCompatActivity {
                 PeakSdk.handleNativeAdClicked(NATIVE_AD_ID);
             }
         });
+        privacyImageView = (ImageView) findViewById(R.id.native_ad_privacy_icon_image);
+        privacyImageView.setImageResource(Integer.parseInt(nativeAd.getPrivacyIcon()));
+        // set onClickListener on privacy information icon ImageView
+        privacyImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //notify SDK that ad was clicked by user
+                PeakSdk.handleNativeAdPrivacyIconClicked(NATIVE_AD_ID);
+            }
+        });
+    }
+
+    @Override
+    protected void onPause() {
+        uiHelper.pause();
+        super.onPause();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        uiHelper.resume();
+    }
+
+    @Override
+    protected void onDestroy() {
+        uiHelper.destroy();
+        interstitialAdAvailabilityExecutor.shutdownNow();
+        super.onDestroy();
     }
 }

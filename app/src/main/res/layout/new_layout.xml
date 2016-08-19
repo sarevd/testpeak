@@ -46,6 +46,10 @@
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:id="@+id/button"/>
+        <ImageView
+            android:layout_width="match_parent"
+            android:id="@+id/native_ad_privacy_icon_image"
+            android:layout_height="50dp"/>
 
 
     </LinearLayout>
