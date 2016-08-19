@@ -4,13 +4,16 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.PersistableBundle;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.peak.PeakSdk;
 import com.peak.PeakSdkListener;
@@ -18,6 +21,7 @@ import com.peak.PeakSdkUiHelper;
 import com.peak.exception.PeakSdkBannerShowFailedException;
 import com.peak.exception.PeakSdkException;
 import com.peak.nativeads.PeakNativeAd;
+import com.squareup.picasso.Picasso;
 
 import org.w3c.dom.Text;
 
@@ -43,10 +47,15 @@ public class NewActivity extends AppCompatActivity {
     private boolean interstitialShown = false;
     private boolean bannerShown = false;
 
-    ImageView adIcon, mainImage, privacyImageView;
-    TextView adText, adTitle;
-    Button button;
+    private ImageView mainImageView;
+    private ImageView logoImageView;
+    private ImageView privacyIconImageView;
+    private TextView titleTextView;
+    private TextView descriptionTextView;
+    private Button adActionButton;
+    private ProgressBar progressBar;
     private final Handler uiThreadHandler = new Handler();
+    PeakNativeAd nativeAd;
 
     PeakSdkUiHelper uiHelper = new PeakSdkUiHelper(NewActivity.this);
     private LinearLayout bannerContainer;
@@ -63,11 +72,27 @@ public class NewActivity extends AppCompatActivity {
 
     private static final int AD_CHECK_DELAY_SECONDS = 1;
 
+
+    private static final int NATIVE_AD_AVAILABILITY_CHECK_DELAY_SECONDS = 1;
+    private static final int ACTIVITY_FINISH_IF_AD_NOT_SHOWN_DELAY = 30 * 1000;
+
+
+    private final Runnable finishActivityRunnable = new Runnable() {
+        @Override
+        public void run() {
+            if (!isNativeShown()) {
+//                Toast.makeText(this, R.string.error_native_ad_not_provided,
+//                        Toast.LENGTH_SHORT).show();
+                finish();
+            }
+        }
+    };
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.new_layout);
-
+        findViews();
         PeakSdkListener peakSdkListener = new PeakSdkListener() {
             @Override
             public void onInitializationSuccess() {
@@ -157,9 +182,16 @@ public class NewActivity extends AppCompatActivity {
         bannerAdAvailabilityExecutor.scheduleWithFixedDelay(
                 getShowBannerRunnable(), 0, AD_CHECK_DELAY_SECONDS, TimeUnit.SECONDS);
         nativeAdAvailabilityExecutor.scheduleWithFixedDelay(
-                getShowNativeRunnable(), 0, AD_CHECK_DELAY_SECONDS, TimeUnit.SECONDS);
+                getShowNativeRunnable(), NATIVE_AD_AVAILABILITY_CHECK_DELAY_SECONDS,
+                NATIVE_AD_AVAILABILITY_CHECK_DELAY_SECONDS, TimeUnit.SECONDS);
+      //  uiThreadHandler.postDelayed(finishActivityRunnable, ACTIVITY_FINISH_IF_AD_NOT_SHOWN_DELAY);
         interstitialAdAvailabilityExecutor.scheduleWithFixedDelay(
                 getShowInterstitialRunnable(), 0, AD_CHECK_DELAY_SECONDS, TimeUnit.SECONDS);
+    }
+
+
+    private boolean isNativeShown() {
+        return nativeAd != null;
     }
 
     private Runnable getShowInterstitialRunnable() {
@@ -206,13 +238,77 @@ public class NewActivity extends AppCompatActivity {
                 if (isFinishing()) {
                     nativeAdAvailabilityExecutor.shutdownNow();
                 }
-                if (PeakSdk.checkAdAvailable(NATIVE_AD_ID)) {
-                    showNativeAd();
+                if (isNativeShown()) {
+                    return;
                 }
+                uiThreadHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        showNativeAd();
+                    }
+                });
             }
         };
     }
 
+    private void findViews() {
+        mainImageView = (ImageView) findViewById(R.id.mainImageView);
+        logoImageView = (ImageView) findViewById(R.id.logoImageView);
+        privacyIconImageView = (ImageView) findViewById(R.id.privacyInformationIconImageView);
+        titleTextView = (TextView) findViewById(R.id.titleTextView);
+        descriptionTextView = (TextView) findViewById(R.id.descriptionTextView);
+        adActionButton = (Button) findViewById(R.id.interactWithAdButton);
+        progressBar = (ProgressBar) findViewById(R.id.progressBar);
+    }
+
+    private void showNativeAd() {
+        if (PeakSdk.checkAdAvailable(NATIVE_AD_ID)) {
+            nativeAd = PeakSdk.showNativeAd(NATIVE_AD_ID);
+            if (nativeAd != null) {
+                progressBar.setVisibility(View.GONE);
+                PeakSdk.trackNativeAdShown(NATIVE_AD_ID);
+                bindNativeAdToViews(nativeAd);
+            }
+        }
+    }
+
+    private void bindNativeAdToViews(PeakNativeAd nativeAd) {
+        Picasso imageLoader = Picasso.with(this);
+        fillMainImage(nativeAd, imageLoader);
+        fillIcon(nativeAd, imageLoader);
+        fillPrivacyInformationIcon(nativeAd, imageLoader);
+        titleTextView.setText(nativeAd.getTitle());
+        descriptionTextView.setText(nativeAd.getText());
+        adActionButton.setVisibility(View.VISIBLE);
+        adActionButton.setText(nativeAd.getActionText());
+        adActionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                PeakSdk.handleNativeAdClicked(NATIVE_AD_ID);
+            }
+        });
+    }
+
+    private void fillMainImage(PeakNativeAd nativeAd, Picasso imageLoader) {
+        String mainImage = nativeAd.getMainImage();
+        if (!TextUtils.isEmpty(mainImage)) {
+            imageLoader.load(mainImage).into(mainImageView);
+        }
+    }
+
+    private void fillIcon(PeakNativeAd nativeAd, Picasso imageLoader) {
+        String icon = nativeAd.getIcon();
+        if (!TextUtils.isEmpty(icon)) {
+            imageLoader.load(icon).into(logoImageView);
+        }
+    }
+
+    private void fillPrivacyInformationIcon(PeakNativeAd nativeAd, Picasso imageLoader) {
+        String privacyIcon = nativeAd.getPrivacyIcon();
+        if (!TextUtils.isEmpty(privacyIcon)) {
+            imageLoader.load(privacyIcon).into(privacyIconImageView);
+        }
+    }
 
     @SuppressWarnings("ConstantConditions")
     private void showBanner(View banner) {
@@ -220,54 +316,6 @@ public class NewActivity extends AppCompatActivity {
         ((ViewGroup) findViewById(R.id.bannerContainer)).addView(banner);
     }
 
-    private void showNativeAd() {
-        if (PeakSdk.checkAdAvailable(NATIVE_AD_ID)) {
-            PeakNativeAd peakNativeAd = PeakSdk.showNativeAd(NATIVE_AD_ID);
-            if (peakNativeAd != null) {
-                //notify SDK that ad was shown
-                PeakSdk.trackNativeAdShown(NATIVE_AD_ID);
-                bindNativeAdToViews(peakNativeAd);
-            }
-        }
-    }
-
-    private void bindNativeAdToViews(PeakNativeAd nativeAd) {
-        //fill views with received native ad data
-
-        // load the nativeAd.getMainImage() into your ImageView for the main image
-        // load the nativeAd.getIcon() into your ImageView for icon image
-        // set the nativeAd.getTitle() into you TextView for title
-        // set the nativeAd.getText() into you TextView for description text
-        // set the nativeAd.getActionText() into your Button
-        mainImage = (ImageView) findViewById(R.id.native_ad_main_image);
-        mainImage.setImageResource(Integer.parseInt(nativeAd.getMainImage()));
-        adIcon = (ImageView) findViewById(R.id.native_ad_icon_image);
-        adIcon.setImageResource(Integer.parseInt(nativeAd.getIcon()));
-        adText = (TextView) findViewById(R.id.native_ad_text);
-        adText.setText(nativeAd.getText());
-        adTitle = (TextView) findViewById(R.id.native_ad_title);
-        adTitle.setText(nativeAd.getTitle());
-        button = (Button) findViewById(R.id.button);
-        button.setText(nativeAd.getActionText());
-        // set onClickListener on your button
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //notify SDK that ad was clicked by user
-                PeakSdk.handleNativeAdClicked(NATIVE_AD_ID);
-            }
-        });
-        privacyImageView = (ImageView) findViewById(R.id.native_ad_privacy_icon_image);
-        privacyImageView.setImageResource(Integer.parseInt(nativeAd.getPrivacyIcon()));
-        // set onClickListener on privacy information icon ImageView
-        privacyImageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //notify SDK that ad was clicked by user
-                PeakSdk.handleNativeAdPrivacyIconClicked(NATIVE_AD_ID);
-            }
-        });
-    }
 
     @Override
     protected void onPause() {
@@ -284,6 +332,7 @@ public class NewActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         uiHelper.destroy();
+        //uiThreadHandler.removeCallbacks(finishActivityRunnable);
         interstitialAdAvailabilityExecutor.shutdownNow();
         super.onDestroy();
     }

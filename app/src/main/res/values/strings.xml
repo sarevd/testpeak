@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">My Application</string>
+    <string name="error_native_ad_not_provided">no ad provided</string>
 </resources>

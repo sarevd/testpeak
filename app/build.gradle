@@ -28,5 +28,6 @@ dependencies {
     compile 'com.android.support:appcompat-v7:24.1.1'
     compile 'com.google.android.gms:play-services-ads:9.4.0'
     compile 'com.google.android.gms:play-services-location:9.4.0'
-    compile project(':peak-sdk-new')
+    compile 'com.squareup.picasso:picasso:2.5.2'
+    compile project(':peak-sdk-0.10.0-hotfix1')
 }
