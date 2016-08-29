@@ -52,7 +52,7 @@ public class DoodleTest extends AppCompatActivity {
             @Override
             public void onInitializationSuccess() {
                 Log.d(TAG, "onInitializationSuccess: ");
-                PeakSdk.showInterstitial(PEAK_INTERSTITIAL_ZONE_ID);
+          //      PeakSdk.showInterstitial(PEAK_INTERSTITIAL_ZONE_ID);
             }
 
             @Override
