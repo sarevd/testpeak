@@ -2,10 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/MyApplication2.iml" filepath="$PROJECT_DIR$/MyApplication2.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/peak-sdk-0.10.0-hotfix1/peak-sdk-0.10.0-hotfix1.iml" filepath="$PROJECT_DIR$/peak-sdk-0.10.0-hotfix1/peak-sdk-0.10.0-hotfix1.iml" />
-      <module fileurl="file://$PROJECT_DIR$/peak-sdk-new/peak-sdk-new.iml" filepath="$PROJECT_DIR$/peak-sdk-new/peak-sdk-new.iml" />
+      <module fileurl="file://$PROJECT_DIR$/peak-sdk-news/peak-sdk-news.iml" filepath="$PROJECT_DIR$/peak-sdk-news/peak-sdk-news.iml" />
       <module fileurl="file://$PROJECT_DIR$/testpeak.iml" filepath="$PROJECT_DIR$/testpeak.iml" />
     </modules>
   </component>

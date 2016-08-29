@@ -10,8 +10,7 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/app" />
-            <option value="$PROJECT_DIR$/peak-sdk-0.10.0-hotfix1" />
-            <option value="$PROJECT_DIR$/peak-sdk-new" />
+            <option value="$PROJECT_DIR$/peak-sdk-news" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />
