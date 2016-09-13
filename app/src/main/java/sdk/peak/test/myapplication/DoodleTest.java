@@ -21,9 +21,17 @@ import java.util.concurrent.TimeUnit;
 
 public class DoodleTest extends AppCompatActivity {
 
-    private static final String PEAK_APP_ID = "b275a085a5c266ef";
-    private static final String PEAK_INTERSTITIAL_ZONE_ID = "26773";
-    private static final String PEAK_REWARDED_ZONE_ID = "26763";
+    //    private static final String PEAK_APP_ID = "5b1656281bbad6b8";
+//    private static final String PEAK_INTERSTITIAL_ZONE_ID = "27022";
+//    private static final String PEAK_REWARDED_ZONE_ID = "";
+    private static final String PEAK_APP_ID = "343b9d1657f5f935";
+    private static final String PEAK_INTERSTITIAL_ZONE_ID = "112145";
+    private static final String PEAK_VIDEO_ZONE_ID = "112268";
+    private static final String PEAK_REWARDED_ZONE_ID = "112391";
+    //    private static final String PEAK_APP_ID = "5b1656281bbad6b8";
+//    private static final String PEAK_INTERSTITIAL_ZONE_ID = "27022";
+//    private static final String PEAK_BANNER_ZONE_ID = "27041";
+//    private static final String NATIVE_AD_ID = "27050";
 
     private boolean interstitialShown = false;
 
@@ -52,7 +60,7 @@ public class DoodleTest extends AppCompatActivity {
             @Override
             public void onInitializationSuccess() {
                 Log.d(TAG, "onInitializationSuccess: ");
-          //      PeakSdk.showInterstitial(PEAK_INTERSTITIAL_ZONE_ID);
+                //      PeakSdk.showInterstitial(PEAK_INTERSTITIAL_ZONE_ID);
             }
 
             @Override
@@ -117,7 +125,7 @@ public class DoodleTest extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if (PeakSdk.checkAdAvailable(PEAK_INTERSTITIAL_ZONE_ID)) {
-                    interstitialShown = true;
+                    //   interstitialShown = true;
                     PeakSdk.showInterstitial(PEAK_INTERSTITIAL_ZONE_ID);
                 }
             }
@@ -127,7 +135,7 @@ public class DoodleTest extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if (PeakSdk.checkAdAvailable(PEAK_REWARDED_ZONE_ID)) {
-                    interstitialShown = true;
+                    //  interstitialShown = true;
                     PeakSdk.showInterstitial(PEAK_REWARDED_ZONE_ID);
                 }
             }

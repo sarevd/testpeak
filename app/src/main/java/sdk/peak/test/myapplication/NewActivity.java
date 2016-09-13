@@ -2,7 +2,6 @@ package sdk.peak.test.myapplication;
 
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.PersistableBundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
@@ -13,17 +12,13 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.peak.PeakSdk;
 import com.peak.PeakSdkListener;
 import com.peak.PeakSdkUiHelper;
-import com.peak.exception.PeakSdkBannerShowFailedException;
 import com.peak.exception.PeakSdkException;
 import com.peak.nativeads.PeakNativeAd;
 import com.squareup.picasso.Picasso;
-
-import org.w3c.dom.Text;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -38,7 +33,7 @@ public class NewActivity extends AppCompatActivity {
     private static final String PEAK_INTERSTITIAL_ZONE_ID = "27022";
     private static final String PEAK_BANNER_ZONE_ID = "27041";
     private static final String NATIVE_AD_ID = "27050";
-    // new ids
+//    // new ids
 //    private static final String PEAK_APP_ID = "343b9d1657f5f935";
 //    private static final String PEAK_INTERSTITIAL_ZONE_ID = "59638";
 //    private static final String PEAK_BANNER_ZONE_ID = "59665";
@@ -185,8 +180,8 @@ public class NewActivity extends AppCompatActivity {
                 getShowNativeRunnable(), NATIVE_AD_AVAILABILITY_CHECK_DELAY_SECONDS,
                 NATIVE_AD_AVAILABILITY_CHECK_DELAY_SECONDS, TimeUnit.SECONDS);
       //  uiThreadHandler.postDelayed(finishActivityRunnable, ACTIVITY_FINISH_IF_AD_NOT_SHOWN_DELAY);
-        interstitialAdAvailabilityExecutor.scheduleWithFixedDelay(
-                getShowInterstitialRunnable(), 0, AD_CHECK_DELAY_SECONDS, TimeUnit.SECONDS);
+      //  interstitialAdAvailabilityExecutor.scheduleWithFixedDelay(
+              //  getShowInterstitialRunnable(), 0, AD_CHECK_DELAY_SECONDS, TimeUnit.SECONDS);
     }
 
 
