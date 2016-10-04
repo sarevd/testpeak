@@ -18,7 +18,7 @@ import com.peak.PeakSdk;
 import com.peak.PeakSdkListener;
 import com.peak.PeakSdkUiHelper;
 import com.peak.exception.PeakSdkException;
-import com.peak.nativeads.PeakNativeAd;
+import com.peak.nativeads.model.PeakNativeAdModel;
 import com.squareup.picasso.Picasso;
 
 /**
@@ -27,10 +27,10 @@ import com.squareup.picasso.Picasso;
 
 public class ProxyActivity extends AppCompatActivity {
 
-    private static final String PEAK_APP_ID = "2662c914e72da398";
-    private static final String INTERSTITIAL_ZONE_ID = "132147";
-    private static final String BANNER_ZONE_ID = "132174";
-    private static final String NATIVE_ZONE_ID = "132187";
+    private static final String PEAK_APP_ID = "343b9d1657f5f935";
+    private static final String INTERSTITIAL_ZONE_ID = "59638";
+    private static final String BANNER_ZONE_ID = "59665";
+    private static final String NATIVE_ZONE_ID = "59678";
     private boolean interstitialShown = false;
     private boolean bannerShown = false;
 
@@ -42,7 +42,7 @@ public class ProxyActivity extends AppCompatActivity {
     private Button adActionButton;
     private ProgressBar progressBar;
     private final Handler uiThreadHandler = new Handler();
-    PeakNativeAd nativeAd;
+    PeakNativeAdModel nativeAd;
 
     private static final String TAG = "PEAKKK";
 
@@ -212,7 +212,7 @@ public class ProxyActivity extends AppCompatActivity {
         }
     }
 
-    private void bindNativeAdToViews(PeakNativeAd nativeAd) {
+    private void bindNativeAdToViews(PeakNativeAdModel nativeAd) {
         Picasso imageLoader = Picasso.with(this);
         fillMainImage(nativeAd, imageLoader);
         fillIcon(nativeAd, imageLoader);
@@ -229,21 +229,21 @@ public class ProxyActivity extends AppCompatActivity {
         });
     }
 
-    private void fillMainImage(PeakNativeAd nativeAd, Picasso imageLoader) {
+    private void fillMainImage(PeakNativeAdModel nativeAd, Picasso imageLoader) {
         String mainImage = nativeAd.getMainImage();
         if (!TextUtils.isEmpty(mainImage)) {
             imageLoader.load(mainImage).into(mainImageView);
         }
     }
 
-    private void fillIcon(PeakNativeAd nativeAd, Picasso imageLoader) {
+    private void fillIcon(PeakNativeAdModel nativeAd, Picasso imageLoader) {
         String icon = nativeAd.getIcon();
         if (!TextUtils.isEmpty(icon)) {
             imageLoader.load(icon).into(logoImageView);
         }
     }
 
-    private void fillPrivacyInformationIcon(PeakNativeAd nativeAd, Picasso imageLoader) {
+    private void fillPrivacyInformationIcon(PeakNativeAdModel nativeAd, Picasso imageLoader) {
         String privacyIcon = nativeAd.getPrivacyIcon();
         if (!TextUtils.isEmpty(privacyIcon)) {
             imageLoader.load(privacyIcon).into(privacyIconImageView);

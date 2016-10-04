@@ -3,7 +3,9 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/peaksdkk/peaksdkk.iml" filepath="$PROJECT_DIR$/peaksdkk/peaksdkk.iml" />
+      <module fileurl="file://$PROJECT_DIR$/peak/peak.iml" filepath="$PROJECT_DIR$/peak/peak.iml" />
+      <module fileurl="file://$PROJECT_DIR$/peak-sdka/peak-sdka.iml" filepath="$PROJECT_DIR$/peak-sdka/peak-sdka.iml" />
+      <module fileurl="file://$PROJECT_DIR$/sdk-prod-release/sdk-prod-release.iml" filepath="$PROJECT_DIR$/sdk-prod-release/sdk-prod-release.iml" />
       <module fileurl="file://$PROJECT_DIR$/testpeak.iml" filepath="$PROJECT_DIR$/testpeak.iml" />
     </modules>
   </component>

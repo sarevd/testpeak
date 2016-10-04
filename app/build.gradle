@@ -25,9 +25,9 @@ dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     testCompile 'junit:junit:4.12'
     compile 'com.android.support:multidex:1.0.1'
-    compile 'com.android.support:appcompat-v7:24.2.0'
-    compile 'com.google.android.gms:play-services-ads:9.4.0'
-    compile 'com.google.android.gms:play-services-location:9.4.0'
+    compile 'com.android.support:appcompat-v7:24.2.1'
+    compile 'com.google.android.gms:play-services-ads:9.6.0'
+    compile 'com.google.android.gms:play-services-location:9.6.0'
     compile 'com.squareup.picasso:picasso:2.5.2'
-    compile project(':peaksdkk')
+    compile project(':sdk-prod-release')
 }

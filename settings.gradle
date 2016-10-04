@@ -1,1 +1,1 @@
-include ':app', ':peaksdkk'
+include ':app', ':peak-sdka', ':peak', ':sdk-prod-release'
